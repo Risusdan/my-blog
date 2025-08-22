@@ -1,8 +1,8 @@
----
-title: "My First Post"
-date: 2025-08-22T10:00:00-07:00
-draft: true
----
++++
+date = '2025-08-22T10:00:00-07:00'
+draft = false
+title = 'My First Post'
++++
 
 # Welcome to My Blog
 
