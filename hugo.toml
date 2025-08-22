@@ -2,3 +2,30 @@ baseURL = 'https://example.org/'
 languageCode = 'en-us'
 title = 'My Personal Blog'
 theme = 'minos'
+
+# Navigation menu
+[[menu.main]]
+  name = "Home"
+  url = "/"
+  weight = 1
+
+[[menu.main]]
+  name = "Posts"
+  url = "/posts/"
+  weight = 2
+
+[[menu.main]]
+  name = "Categories"
+  url = "/categories/"
+  weight = 3
+
+[[menu.main]]
+  name = "Tags"
+  url = "/tags/"
+  weight = 4
+
+
+# Site parameters
+[params]
+  description = "A personal blog about development, productivity, and technology"
+  author = "Your Name"

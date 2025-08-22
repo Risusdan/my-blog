@@ -2,6 +2,8 @@
 date = '2025-08-22T10:00:00-07:00'
 draft = false
 title = 'My First Post'
+categories = ['General', 'Getting Started']
+tags = ['hugo', 'blog', 'first-post', 'introduction']
 +++
 
 # Welcome to My Blog

@@ -2,6 +2,8 @@
 date = '2025-08-22T23:16:07+08:00'
 draft = false
 title = 'Test Post'
+categories = ['Development']
+tags = ['testing', 'development']
 +++
 
 This is a test post.
