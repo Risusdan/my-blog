@@ -1,31 +1,49 @@
 baseURL = 'https://example.org/'
 languageCode = 'en-us'
 title = 'My Personal Blog'
-theme = 'minos'
+theme = 'hugo-coder'
+defaultContentLanguage = "en"
+enableEmoji = true
 
-# Navigation menu
-[[menu.main]]
-  name = "Home"
-  url = "/"
-  weight = 1
+[pagination]
+pagerSize = 6
 
-[[menu.main]]
-  name = "Posts"
-  url = "/posts/"
-  weight = 2
+[markup]
+[markup.highlight]
+noClasses = false
 
-[[menu.main]]
-  name = "Categories"
-  url = "/categories/"
-  weight = 3
+[markup.goldmark]
+[markup.goldmark.renderer]
+unsafe = true
 
-[[menu.main]]
-  name = "Tags"
-  url = "/tags/"
-  weight = 4
-
-
-# Site parameters
 [params]
-  description = "A personal blog about development, productivity, and technology"
-  author = "Your Name"
+author = "Your Name"
+description = "A personal blog about development, productivity, and technology"
+keywords = "blog,developer,personal"
+info = ["Developer", "Tech Enthusiast"]
+dateFormat = "January 2, 2006"
+since = 2025
+colorScheme = "auto"
+hideColorSchemeToggle = false
+
+[taxonomies]
+category = "categories"
+tag = "tags"
+
+[languages.en]
+languageName = ":us:"
+
+[[languages.en.menu.main]]
+name = "Blog"
+weight = 1
+url = "posts/"
+
+[[languages.en.menu.main]]
+name = "Categories"
+weight = 2
+url = "categories/"
+
+[[languages.en.menu.main]]
+name = "Tags"
+weight = 3
+url = "tags/"
