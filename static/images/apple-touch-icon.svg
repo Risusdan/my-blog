@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" width="180" height="180">
+  <!-- Background with rounded corners for iOS -->
+  <rect width="180" height="180" rx="40" ry="40" fill="#2E7D32"/>
+  <!-- Large leaf in center -->
+  <ellipse cx="90" cy="90" rx="50" ry="60" fill="#4CAF50" transform="rotate(15 90 90)"/>
+  <!-- Main vein -->
+  <line x1="90" y1="35" x2="90" y2="145" stroke="#1B5E20" stroke-width="4"/>
+  <!-- Side veins -->
+  <path d="M60 60L90 80L120 60" stroke="#1B5E20" stroke-width="3" fill="none"/>
+  <path d="M55 90L90 105L125 90" stroke="#1B5E20" stroke-width="3" fill="none"/>
+  <path d="M65 115L90 125L115 115" stroke="#1B5E20" stroke-width="2" fill="none"/>
+</svg>
