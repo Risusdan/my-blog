@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Green leaf design for 32x32 favicon -->
+  <rect width="32" height="32" rx="6" ry="6" fill="#2E7D32"/>
+  <ellipse cx="16" cy="16" rx="10" ry="12" fill="#4CAF50" transform="rotate(15 16 16)"/>
+  <line x1="16" y1="6" x2="16" y2="26" stroke="#1B5E20" stroke-width="2"/>
+  <path d="M10 12L16 15L22 12" stroke="#1B5E20" stroke-width="1.5" fill="none"/>
+  <path d="M8 18L16 20L24 18" stroke="#1B5E20" stroke-width="1.5" fill="none"/>
+</svg>

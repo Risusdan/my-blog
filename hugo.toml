@@ -1,49 +1,77 @@
 baseURL = 'https://example.org/'
 languageCode = 'en-us'
-title = 'My Personal Blog'
+title = 'CHIENLIN'
 theme = 'hugo-coder'
 defaultContentLanguage = "en"
 enableEmoji = true
 
 [pagination]
-pagerSize = 6
+pagerSize = 20
 
-[markup]
 [markup.highlight]
-noClasses = false
+style = "github-dark"
 
 [markup.goldmark]
 [markup.goldmark.renderer]
 unsafe = true
 
 [params]
-author = "Your Name"
+author = "CHIENLIN"
+info = ["Software Developer"]
 description = "A personal blog about development, productivity, and technology"
 keywords = "blog,developer,personal"
-info = ["Developer", "Tech Enthusiast"]
-dateFormat = "January 2, 2006"
+avatarURL = "images/me.jpg"
+
+faviconSVG = "images/favicon-32x32.svg"
+favicon_32 = "images/favicon-32x32.svg"
+favicon_16 = "images/favicon-16x16.svg"
+touchIcon = "images/apple-touch-icon.svg"
+
 since = 2025
-colorScheme = "auto"
-hideColorSchemeToggle = false
+
+enableTwemoji = true
+
+colorScheme = "light"
+hideColorSchemeToggle = true
 
 [taxonomies]
 category = "categories"
+series = "series"
 tag = "tags"
+author = "authors"
 
-[languages.en]
-languageName = ":us:"
+[[params.social]]
+name = "Github"
+icon = "fa-brands fa-github fa-2x"
+weight = 1
+url = "https://github.com/Risusdan/"
+[[params.social]]
+name = "Gitlab"
+icon = "fa-brands fa-linkedin fa-2x"
+weight = 2
+url = "https://www.linkedin.com/in/daniel-su-73627a1a7/"
 
-[[languages.en.menu.main]]
+[[menu.main]]
 name = "Blog"
 weight = 1
 url = "posts/"
 
-[[languages.en.menu.main]]
-name = "Categories"
+[[menu.main]]
+name = "Tool"
 weight = 2
+url = "tools/"
+
+[[menu.main]]
+name = "Categories"
+weight = 3
 url = "categories/"
 
-[[languages.en.menu.main]]
+[[menu.main]]
 name = "Tags"
-weight = 3
+weight = 4
 url = "tags/"
+
+[[menu.main]]
+name = "About"
+weight = 5
+url = "about/"
