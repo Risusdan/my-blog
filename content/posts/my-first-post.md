@@ -1,12 +1,12 @@
 +++
 date = '2025-08-22T10:00:00-07:00'
 draft = false
-title = 'My First Post'
-categories = ['General', 'Getting Started']
-tags = ['hugo', 'blog', 'first-post', 'introduction']
+title = 'A Tour of C++ 01: The Basics'
+categories = ['A Tour of C++']
+tags = ['C++']
 +++
 
-# Welcome to My Blog
+# A Tour of C++ 01: The Basics
 
 This is my first blog post using Hugo with the Minos theme. I'm excited to start sharing my thoughts and experiences here!
 
