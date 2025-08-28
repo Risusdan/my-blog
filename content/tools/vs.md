@@ -8,5 +8,5 @@ Here are the extensions that I use frequently:
 
 - CodeMaid VS2022
 - IndentRainbow
-- Atom One Dark Theme
+- One Dark Pro Theme
 - Markdown Editor v2 
