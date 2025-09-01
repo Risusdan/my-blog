@@ -20,6 +20,10 @@ tags = ['C++']
   - [Pointers, Arrays, and References](#pointers-arrays-and-references)
     - [for, range-for](#for-range-for)
   - [The Null Pointer](#the-null-pointer)
+  - [Tests](#tests)
+  - [Mapping to Hardware](#mapping-to-hardware)
+    - [Assignment](#assignment)
+    - [Initialization](#initialization-1)
 
 ## Terms
 
@@ -33,6 +37,7 @@ tags = ['C++']
 - `//` is called *forward slashes* or *double slash*
 - `\\` is called *backslashes*
 - `<<` is called *put to*
+- `>>` is called *get from*
 
 ## Programs
 
@@ -284,4 +289,62 @@ ref = b; // This copies b's VALUE into a, doesn't reassign reference
 
 ## The Null Pointer
 
+- When we don't have an object to point to or if we need to represent the notion of "no object available" (e.g., for an end of a list), we give the pointer the value `nullptr`.
+- It is often wise to check that a pointer argument actually points to something.
+- In older code, `0` or `NULL` is typically used instead of `nullptr`. However, using `nullptr` eliminates potential confusion between integers (such as `0` or `NULL`) and pointers (such as `nullptr`).
+- A test of a numeric value (e.g., `while(*ptr)`) is equivalent to comapring the value to `0` (that is, `while(*ptr != 0)`).
+- A test of a pointer value (e.g., `if(ptr)`) is equivalent to comapring the value to `nullptr` (that is, `if(ptr != nullptr)`).
+- There are no "null reference". A referenece must refer to a valid object.
 
+## Tests
+
+- Like a for-statement, an if-statement can introduce a variable and test it.
+- A name declared in a condition is in scope on both branches of the if-statement.
+
+```cpp
+void doSomething(vector<int>& v) {
+    if(auto n = v.size(); n!=0) {
+        // we get here if n!=0 ...
+    }
+}
+```
+
+## Mapping to Hardware
+
+### Assignment
+
+- If we want different objects to refer to the same value, we must say so.
+
+```cpp
+int x = 2;
+int y = 3;
+int* xPtr = &x;
+int* yPtr = &y;
+
+xPtr = yPtr; // xPtr becomes &y, now xPtr==yPtr, so *xPtr==*yPtr
+// Now both pointers point to y.
+```
+
+- Assignment to a reference doesn't change what the reference refers to but assigns to the referenced object.
+
+```cpp
+int x = 2;
+int y = 3;
+int& xRef = x;
+int& yRef = y;
+
+xRef = yRef; // read through yRef, write through xRef, x becoms 3
+// Now xRef still points to x, yRef still points to y, but the value of x has changed to 3.
+```
+
+- To access the value pointed to by a pointer, you use `*`; <mark>that is implicitly done for a reference</mark>.
+
+### Initialization
+
+- We can not have an uninitialized reference.
+- You can use both `{}` and `=` to initialize a reference but please don't let that confuse you.
+
+```cpp
+int& r {x}; // bind r to x (r refers to x)
+int& r = x; // bind r to x (r refers to x), not any value copy
+```
