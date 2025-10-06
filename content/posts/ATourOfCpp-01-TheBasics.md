@@ -1,29 +1,29 @@
 +++
-date = '2025-08-22T10:00:00-07:00'
 draft = false
+date = '2025-08-22T10:00:00-07:00'
 title = 'A Tour of C++ 01: The Basics'
 categories = ['A Tour of C++']
 tags = ['C++']
 +++
 
-# A Tour of C++ 01: The Basics
+## Table of Contents
 
-- [A Tour of C++ 01: The Basics](#a-tour-of-c-01-the-basics)
-  - [Terms](#terms)
-  - [Programs](#programs)
-  - [Hello, World!](#hello-world)
-  - [Functions](#functions)
-  - [Types, Variables, and Arithmetic](#types-variables-and-arithmetic)
-  - [Initialization](#initialization)
-  - [Scope and Lifetime](#scope-and-lifetime)
-  - [Constants](#constants)
-  - [Pointers, Arrays, and References](#pointers-arrays-and-references)
-    - [for, range-for](#for-range-for)
-  - [The Null Pointer](#the-null-pointer)
-  - [Tests](#tests)
-  - [Mapping to Hardware](#mapping-to-hardware)
-    - [Assignment](#assignment)
-    - [Initialization](#initialization-1)
+- [Table of Contents](#table-of-contents)
+- [Terms](#terms)
+- [Programs](#programs)
+- [Hello, World!](#hello-world)
+- [Functions](#functions)
+- [Types, Variables, and Arithmetic](#types-variables-and-arithmetic)
+- [Initialization](#initialization)
+- [Scope and Lifetime](#scope-and-lifetime)
+- [Constants](#constants)
+- [Pointers, Arrays, and References](#pointers-arrays-and-references)
+  - [for, range-for](#for-range-for)
+- [The Null Pointer](#the-null-pointer)
+- [Tests](#tests)
+- [Mapping to Hardware](#mapping-to-hardware)
+  - [Assignment](#assignment)
+  - [Initialization](#initialization-1)
 
 ## Terms
 

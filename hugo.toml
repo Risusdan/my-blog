@@ -9,7 +9,7 @@ enableEmoji = true
 pagerSize = 20
 
 [markup.highlight]
-style = "github-dark"
+style = "onedark"
 
 [markup.goldmark]
 [markup.goldmark.renderer]
