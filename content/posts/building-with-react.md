@@ -1,6 +1,6 @@
 +++
 date = '2025-08-20T10:00:00-07:00'
-draft = false
+draft = true
 title = 'Building Modern Web Apps with React'
 categories = ['Development', 'Frontend']
 tags = ['react', 'javascript', 'frontend', 'web-development']

@@ -1,6 +1,6 @@
 +++
 date = '2025-08-18T10:00:00-07:00'
-draft = false
+draft = true
 title = '5 Productivity Tips for Developers'
 categories = ['Productivity', 'Career']
 tags = ['productivity', 'workflow', 'tips', 'developer-life']

@@ -62,6 +62,11 @@ weight = 2
 url = "tools/"
 
 [[menu.main]]
+name = "C++"
+weight = 2
+url = "cpp/"
+
+[[menu.main]]
 name = "Categories"
 weight = 3
 url = "categories/"
