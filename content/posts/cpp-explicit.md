@@ -1,12 +1,10 @@
 +++
 date = '2025-12-14T10:17:22+08:00'
 draft = false
-title = '[C++] explicit: Avoiding the pitfalls of implicit conversion'
+title = '[C++] explicit: 避免隱式轉換的陷阱'
 categories = ['C++ Notes']
 tags = ['C++']
 +++
-
-# [C++] explicit: Avoiding the pitfalls of implicit conversion
 
 ## 前言
 

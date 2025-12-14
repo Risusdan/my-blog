@@ -1,16 +1,14 @@
 +++ 
 draft = false
 date = 2025-12-13T16:45:48+08:00
-title = "[Podcast] Do This Every Morning to Boost Your Energy and Improve Your Sleep"
+title = "Do This Every Morning to Boost Your Energy and Improve Your Sleep"
 categories = ['Podcast']
 tags = ['Health']
 +++
 
-# [Podcast] Do This Every Morning to Boost Your Energy and Improve Your Sleep
-
 ## 前言
 
-在 Threads 看到網友貼文，提到 Andrew Huberman 在 podcast 建議每天早上要做的事情，想說記錄一下。
+在 Threads 看到網友貼文，提到 Andrew Huberman 在 podcast 「Do This Every Morning to Boost Your Energy and Improve Your Sleep」一集中建議每天早上要做的事情，想說記錄一下。
 
 > https://podcasts.apple.com/tw/podcast/bitesize-do-this-every-morning-to-boost-your-energy/id1333552422?i=1000595429728&l=en-GB
 
@@ -36,7 +34,7 @@ tags = ['Health']
 - 一天只在 8–12 小時內進食，例如 12:00–20:00。
 - 讓腸胃休息、啟動自噬，身體會清理損壞的細胞，減少慢性發炎。
 
-### 5.生理式嘆氣
+### 5.呼吸
 
 - 感到緊張時，「吸兩口短短的氣」再接「吐一個長長的氣」，重複 2–3 次。
 - 科學證實能快速啟動副交感神經，直接讓身體降速。
