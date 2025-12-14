@@ -1,7 +1,7 @@
 +++ 
 draft = false
 date = 2025-12-13T16:45:48+08:00
-title = "Do This Every Morning to Boost Your Energy and Improve Your Sleep"
+title = "[Podcast] Do This Every Morning to Boost Your Energy and Improve Your Sleep"
 categories = ['Podcast']
 tags = ['Health']
 +++
@@ -12,7 +12,7 @@ tags = ['Health']
 
 在 Threads 看到網友貼文，提到 Andrew Huberman 在 podcast 建議每天早上要做的事情，想說記錄一下。
 
-> Resource: https://podcasts.apple.com/tw/podcast/bitesize-do-this-every-morning-to-boost-your-energy/id1333552422?i=1000595429728&l=en-GB
+> https://podcasts.apple.com/tw/podcast/bitesize-do-this-every-morning-to-boost-your-energy/id1333552422?i=1000595429728&l=en-GB
 
 ## 六個習慣
 
