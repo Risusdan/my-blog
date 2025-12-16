@@ -404,8 +404,8 @@ int result = square(x++);  // x 只被累加一次
 
 記住這個簡單的口訣：
 
-> **對於常數，用 const 或 enum，不要用 #define**
-> **對於 macro 函式，用 inline，不要用 #define**
+> **對於常數，用 const 或 enum，不要用 #define；**</br>
+> **對於 macro 函式，用 inline，不要用 #define。**
 
 這樣做可以：
 - 讓程式碼更容易除錯（名稱會進入符號表）
