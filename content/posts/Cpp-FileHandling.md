@@ -3,8 +3,44 @@ date = '2025-12-16T23:59:50+08:00'
 draft = false
 title = '[C++] 檔案處理：從 C-style 到現代 C++'
 categories = ['C++ Notes']
-tags = ['C++', 'File I/O', 'C++17']
+tags = ['C++']
 +++
+
+# 目錄
+
+- [目錄](#目錄)
+  - [前言](#前言)
+  - [C++ 檔案處理的演進](#c-檔案處理的演進)
+  - [方法一：C-style 檔案處理（FILE\*）](#方法一c-style-檔案處理file)
+    - [基本操作](#基本操作)
+    - [檔案開啟模式](#檔案開啟模式)
+    - [優點與缺點](#優點與缺點)
+  - [方法二：C++ 串流處理（fstream）](#方法二c-串流處理fstream)
+    - [基本使用](#基本使用)
+    - [三種檔案串流類別](#三種檔案串流類別)
+    - [開啟模式](#開啟模式)
+    - [完整的讀寫範例](#完整的讀寫範例)
+  - [二進位檔案處理](#二進位檔案處理)
+    - [寫入和讀取結構](#寫入和讀取結構)
+    - [輸出結果](#輸出結果)
+  - [錯誤處理](#錯誤處理)
+    - [檢查檔案狀態](#檢查檔案狀態)
+    - [完整的錯誤處理範例](#完整的錯誤處理範例)
+  - [檔案位置操作](#檔案位置操作)
+    - [seekg 和 seekp](#seekg-和-seekp)
+    - [取得檔案大小](#取得檔案大小)
+  - [C++17 filesystem 函式庫](#c17-filesystem-函式庫)
+    - [基本操作](#基本操作-1)
+    - [路徑處理](#路徑處理)
+    - [檔案資訊查詢](#檔案資訊查詢)
+  - [實用範例](#實用範例)
+    - [範例 1：CSV 檔案處理](#範例-1csv-檔案處理)
+    - [範例 2：設定檔處理](#範例-2設定檔處理)
+    - [範例 3：檔案備份工具](#範例-3檔案備份工具)
+  - [最佳實踐](#最佳實踐)
+    - [DO（應該做的）](#do應該做的)
+    - [DON'T（不應該做的）](#dont不應該做的)
+  - [小結](#小結)
 
 ## 前言
 
@@ -493,143 +529,51 @@ int main() {
 }
 ```
 
-## C++17 filesystem 函式庫
+## 方法三：C++17 filesystem 函式庫
 
-C++17 引入的 filesystem 提供了跨平台的檔案系統操作。
+C++17 引入的 `<filesystem>` 標準函式庫提供了現代化、跨平台的檔案系統操作功能，包括：
 
-### 基本操作
+- 檔案和目錄的建立、刪除、重新命名
+- 路徑處理和操作
+- 檔案資訊查詢（大小、權限、修改時間等）
+- 目錄遍歷和內容列舉
+- 複製、移動檔案和目錄
+
+### 簡單範例
 
 ```cpp
 #include <filesystem>
 #include <iostream>
-#include <fstream>
 
 namespace fs = std::filesystem;
 
-void filesystemBasics() {
-    // 1. 檢查檔案是否存在
+int main() {
+    // 檢查檔案是否存在
     if (fs::exists("test.txt")) {
-        std::cout << "檔案存在\n";
-    }
-
-    // 2. 取得檔案大小
-    try {
+        // 取得檔案大小
         auto size = fs::file_size("test.txt");
         std::cout << "檔案大小: " << size << " bytes\n";
-    } catch (const fs::filesystem_error& e) {
-        std::cerr << "錯誤: " << e.what() << "\n";
+
+        // 複製檔案
+        fs::copy_file("test.txt", "test_copy.txt");
     }
 
-    // 3. 檢查是否為一般檔案
-    if (fs::is_regular_file("test.txt")) {
-        std::cout << "這是一般檔案\n";
-    }
-
-    // 4. 取得最後修改時間
-    auto ftime = fs::last_write_time("test.txt");
-    std::cout << "最後修改時間已取得\n";
-
-    // 5. 複製檔案
-    try {
-        fs::copy_file("test.txt", "test_copy.txt",
-                      fs::copy_options::overwrite_existing);
-        std::cout << "檔案複製成功\n";
-    } catch (const fs::filesystem_error& e) {
-        std::cerr << "複製失敗: " << e.what() << "\n";
-    }
-
-    // 6. 重新命名/移動檔案
-    try {
-        fs::rename("test_copy.txt", "test_renamed.txt");
-        std::cout << "檔案重新命名成功\n";
-    } catch (const fs::filesystem_error& e) {
-        std::cerr << "重新命名失敗: " << e.what() << "\n";
-    }
-
-    // 7. 刪除檔案
-    if (fs::remove("test_renamed.txt")) {
-        std::cout << "檔案刪除成功\n";
-    }
+    return 0;
 }
 ```
 
-### 路徑處理
+### 更多資訊
 
-```cpp
-#include <filesystem>
-#include <iostream>
+關於 C++17 filesystem 的完整說明，包括目錄操作、路徑處理、檔案遍歷等進階功能，請參考：
 
-namespace fs = std::filesystem;
+**[[C++] 目錄處理：C++17 filesystem 完整指南](./Cpp-DirectoryHandling.md)**
 
-void pathOperations() {
-    fs::path p = "/home/user/documents/file.txt";
-
-    std::cout << "完整路徑: " << p << "\n";
-    std::cout << "檔名: " << p.filename() << "\n";           // file.txt
-    std::cout << "副檔名: " << p.extension() << "\n";        // .txt
-    std::cout << "主檔名: " << p.stem() << "\n";             // file
-    std::cout << "父目錄: " << p.parent_path() << "\n";      // /home/user/documents
-    std::cout << "根目錄: " << p.root_path() << "\n";        // /
-
-    // 組合路徑
-    fs::path dir = "/home/user";
-    fs::path file = "document.txt";
-    fs::path fullPath = dir / file;  // /home/user/document.txt
-    std::cout << "組合路徑: " << fullPath << "\n";
-
-    // 取得絕對路徑
-    fs::path relative = "test.txt";
-    fs::path absolute = fs::absolute(relative);
-    std::cout << "絕對路徑: " << absolute << "\n";
-
-    // 取得當前工作目錄
-    fs::path cwd = fs::current_path();
-    std::cout << "當前目錄: " << cwd << "\n";
-}
-```
-
-### 檔案資訊查詢
-
-```cpp
-#include <filesystem>
-#include <iostream>
-#include <iomanip>
-#include <chrono>
-
-namespace fs = std::filesystem;
-
-void fileInformation(const std::string& filename) {
-    if (!fs::exists(filename)) {
-        std::cerr << "檔案不存在: " << filename << "\n";
-        return;
-    }
-
-    std::cout << "檔案資訊: " << filename << "\n";
-    std::cout << std::string(50, '-') << "\n";
-
-    // 檔案大小
-    std::cout << "大小: " << fs::file_size(filename) << " bytes\n";
-
-    // 檔案類型
-    if (fs::is_regular_file(filename)) {
-        std::cout << "類型: 一般檔案\n";
-    } else if (fs::is_directory(filename)) {
-        std::cout << "類型: 目錄\n";
-    } else if (fs::is_symlink(filename)) {
-        std::cout << "類型: 符號連結\n";
-    }
-
-    // 權限（簡化版）
-    auto perms = fs::status(filename).permissions();
-    std::cout << "可讀: " << ((perms & fs::perms::owner_read) != fs::perms::none) << "\n";
-    std::cout << "可寫: " << ((perms & fs::perms::owner_write) != fs::perms::none) << "\n";
-
-    // 最後修改時間
-    auto ftime = fs::last_write_time(filename);
-    // C++20 可以直接轉換，C++17 需要手動處理
-    std::cout << "最後修改時間已取得\n";
-}
-```
+該文件涵蓋：
+- 目錄的建立、刪除、遍歷
+- 路徑操作和組合
+- 檔案系統資訊查詢
+- 實用範例（備份工具、檔案搜尋、清理工具等）
+- 跨平台考量和最佳實踐
 
 ## 實用範例
 

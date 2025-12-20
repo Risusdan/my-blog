@@ -1,10 +1,46 @@
 +++
 date = '2025-12-16T23:53:15+08:00'
 draft = false
-title = '[C++] Operator Overloading: 運算子多載'
+title = '[C++] Operator Overloading（運算子多載）'
 categories = ['C++ Notes']
-tags = ['C++', 'OOP']
+tags = ['C++']
 +++
+
+# 目錄
+
+- [目錄](#目錄)
+  - [什麼是運算子多載？](#什麼是運算子多載)
+    - [基本概念](#基本概念)
+  - [為什麼需要運算子多載？](#為什麼需要運算子多載)
+    - [提升程式碼可讀性](#提升程式碼可讀性)
+  - [可以多載的運算子](#可以多載的運算子)
+    - [可多載的運算子](#可多載的運算子)
+    - [不可多載的運算子](#不可多載的運算子)
+  - [成員函式 vs 非成員函式](#成員函式-vs-非成員函式)
+    - [成員函式（Member Function）](#成員函式member-function)
+    - [非成員函式（Non-member Function）](#非成員函式non-member-function)
+    - [如何選擇？](#如何選擇)
+    - [為什麼要區分成員函式和非成員函式？](#為什麼要區分成員函式和非成員函式)
+      - [1. C++ 語言規定（強制要求）](#1-c-語言規定強制要求)
+      - [2. 修改左運算元的運算子 → 成員函式](#2-修改左運算元的運算子--成員函式)
+      - [3. 對稱性和隱式轉換 → 非成員函式](#3-對稱性和隱式轉換--非成員函式)
+      - [4. 串流運算子必須是非成員函式](#4-串流運算子必須是非成員函式)
+      - [實際範例：對比兩種方式](#實際範例對比兩種方式)
+      - [總結：選擇準則](#總結選擇準則)
+  - [常用運算子多載範例](#常用運算子多載範例)
+    - [1. 算術運算子（+, -, \*, /）](#1-算術運算子----)
+    - [2. 複合賦值運算子（+=, -=, \*=, /=）](#2-複合賦值運算子----)
+    - [3. 比較運算子（==, !=, \<, \>, \<=, \>=）](#3-比較運算子-----)
+    - [4. 串流運算子（\<\<, \>\>）](#4-串流運算子-)
+    - [5. 下標運算子（\[\]）](#5-下標運算子)
+    - [6. 遞增/遞減運算子（++, --）](#6-遞增遞減運算子---)
+    - [7. 函式呼叫運算子（()）- Functor](#7-函式呼叫運算子--functor)
+    - [8. 型別轉換運算子](#8-型別轉換運算子)
+  - [運算子多載的最佳實踐](#運算子多載的最佳實踐)
+    - [DO（應該做的）](#do應該做的)
+    - [DON'T（不應該做的）](#dont不應該做的)
+  - [完整範例：複數類別](#完整範例複數類別)
+  - [小結](#小結)
 
 ## 什麼是運算子多載？
 
@@ -184,6 +220,207 @@ Complex c3 = c1 + c2;  // operator+(c1, c2)
 - **必須是成員函式**：`=`、`[]`、`()`、`->`
 - **建議非成員函式**：`<<`、`>>`、對稱的二元運算子
 - **可以是任一種**：其他運算子
+
+### 為什麼要區分成員函式和非成員函式？
+
+理解何時選擇成員函式或非成員函式是運算子多載中最重要的設計考量之一。主要有三個關鍵原因：
+
+#### 1. C++ 語言規定（強制要求）
+
+某些運算子**必須**實作為成員函式，這是 C++ 語言的強制要求：
+
+```cpp
+class MyClass {
+public:
+    // 這些運算子必須是成員函式
+    MyClass& operator=(const MyClass& other);    // 賦值
+    MyClass& operator[](size_t index);           // 下標
+    MyClass& operator()();                       // 函式呼叫
+    MyClass* operator->();                       // 成員存取
+};
+```
+
+**原因**：這些運算子與物件的內部狀態緊密相關，且需要直接修改左運算元（`this` 指標）。
+
+#### 2. 修改左運算元的運算子 → 成員函式
+
+如果運算子會修改左運算元，應該實作為成員函式：
+
+```cpp
+class Number {
+    int value;
+public:
+    Number(int v) : value(v) {}
+
+    // 會修改 this 物件，使用成員函式
+    Number& operator+=(const Number& rhs) {
+        value += rhs.value;  // 修改自己
+        return *this;
+    }
+
+    // 不修改任何運算元，使用非成員函式
+    friend Number operator+(const Number& lhs, const Number& rhs) {
+        return Number(lhs.value + rhs.value);
+    }
+};
+
+Number a(5), b(3);
+a += b;  // a 被修改了
+Number c = a + b;  // a 和 b 都不會被修改
+```
+
+#### 3. 對稱性和隱式轉換 → 非成員函式
+
+這是**最關鍵**的設計考量。讓我們看看為什麼對稱的二元運算子應該使用非成員函式。
+
+**問題：成員函式無法對稱處理隱式轉換**
+
+```cpp
+class Number {
+    int value;
+public:
+    Number(int v) : value(v) {}
+
+    // 錯誤示範：使用成員函式
+    Number operator+(const Number& rhs) const {
+        return Number(value + rhs.value);
+    }
+};
+
+Number a(5);
+Number result1 = a + 10;   // 可以！10 被隱式轉換成 Number(10)
+Number result2 = 10 + a;   // 編譯錯誤！int 沒有 operator+ 可以接受 Number
+```
+
+**為什麼 `10 + a` 會失敗？**
+
+- `a + 10` 實際上是 `a.operator+(10)`
+  - 編譯器可以將 `10` 隱式轉換成 `Number(10)`
+  - 呼叫成功：`a.operator+(Number(10))`
+
+- `10 + a` 會變成 `10.operator+(a)`
+  - 但 `int` 型別沒有這個運算子！
+  - 編譯失敗
+
+**解決方案：使用非成員函式實現對稱性**
+
+```cpp
+class Number {
+    int value;
+public:
+    Number(int v) : value(v) {}
+
+    // 正確做法：使用非成員函式
+    friend Number operator+(const Number& lhs, const Number& rhs) {
+        return Number(lhs.value + rhs.value);
+    }
+};
+
+Number a(5);
+Number result1 = a + 10;   // 可以！operator+(a, Number(10))
+Number result2 = 10 + a;   // 可以！operator+(Number(10), a)
+```
+
+現在兩個參數都可以進行隱式轉換，實現了**對稱性**！
+
+#### 4. 串流運算子必須是非成員函式
+
+```cpp
+class Number {
+    int value;
+public:
+    Number(int v) : value(v) {}
+
+    // 正確：非成員函式
+    friend std::ostream& operator<<(std::ostream& os, const Number& num) {
+        os << num.value;
+        return os;
+    }
+};
+
+Number a(42);
+std::cout << a;  // 呼叫 operator<<(std::cout, a)
+```
+
+**為什麼不能是成員函式？**
+
+如果寫成成員函式：
+
+```cpp
+class Number {
+    // 如果是成員函式
+    std::ostream& operator<<(std::ostream& os) const {
+        os << value;
+        return os;
+    }
+};
+
+// 使用時會變成：
+a << std::cout;  // 這樣很不自然！
+```
+
+我們無法修改 `std::ostream` 類別來加入對我們自定義類別的支援，所以必須使用非成員函式，讓 `std::cout` 作為左運算元。
+
+#### 實際範例：對比兩種方式
+
+```cpp
+class Point {
+    int x, y;
+public:
+    Point(int x = 0, int y = 0) : x(x), y(y) {}
+
+    // 成員函式版本（不對稱）
+    Point operator+(const Point& other) const {
+        return Point(x + other.x, y + other.y);
+    }
+};
+
+Point p1(1, 2);
+Point p2(3, 4);
+Point p3 = p1 + p2;      // 可以
+// Point p4 = p1 + 10;   // 無法編譯（即使有轉換建構子）
+```
+
+```cpp
+class Point {
+    int x, y;
+public:
+    Point(int x = 0, int y = 0) : x(x), y(y) {}
+
+    // 非成員函式版本（對稱）
+    friend Point operator+(const Point& lhs, const Point& rhs) {
+        return Point(lhs.x + rhs.x, lhs.y + rhs.y);
+    }
+
+    friend Point operator+(const Point& p, int offset) {
+        return Point(p.x + offset, p.y + offset);
+    }
+
+    friend Point operator+(int offset, const Point& p) {
+        return Point(p.x + offset, p.y + offset);
+    }
+};
+
+Point p1(1, 2);
+Point p2 = p1 + 10;      // 可以
+Point p3 = 10 + p1;      // 可以（對稱）
+```
+
+#### 總結：選擇準則
+
+| 情況 | 選擇 | 原因 |
+|------|------|------|
+| `=` `[]` `()` `->` | 成員函式 | C++ 強制規定 |
+| `+=` `-=` `*=` `++` `--` | 成員函式 | 會修改左運算元 |
+| 一元運算子 `!` `~` `-` | 成員函式 | 通常只操作一個物件 |
+| `+` `-` `*` `/` `==` `!=` | 非成員函式 | 需要對稱的隱式轉換 |
+| `<<` `>>` (串流) | 非成員函式 | 左運算元不是我們的類別 |
+
+**核心原則**：
+- 如果運算子會**修改物件狀態** → 成員函式
+- 如果需要**兩側對稱**的隱式轉換 → 非成員函式
+- 如果**左運算元不是你的類別** → 非成員函式
+- 如果 **C++ 語言規定** → 成員函式
 
 ## 常用運算子多載範例
 
