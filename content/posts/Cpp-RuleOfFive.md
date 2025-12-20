@@ -1,10 +1,44 @@
 +++
 date = '2025-12-16T23:44:36+08:00'
 draft = false
-title = '[C++] Rule of Five: 五法則'
+title = '[C++] Rule of Five（五法則）'
 categories = ['C++ Notes']
-tags = ['C++', 'Move Semantics']
+tags = ['C++']
 +++
+
+# 目錄
+
+- [目錄](#目錄)
+  - [什麼是 Rule of Five？](#什麼是-rule-of-five)
+  - [為什麼需要移動語意？](#為什麼需要移動語意)
+    - [沒有移動語意的問題](#沒有移動語意的問題)
+    - [問題分析](#問題分析)
+  - [移動語意：從複製到轉移](#移動語意從複製到轉移)
+    - [右值參考（Rvalue Reference）](#右值參考rvalue-reference)
+  - [Rule of Five 的完整實作](#rule-of-five-的完整實作)
+    - [執行結果](#執行結果)
+  - [移動操作的核心概念](#移動操作的核心概念)
+    - [移動建構子](#移動建構子)
+    - [為什麼要加 noexcept？](#為什麼要加-noexcept)
+  - [std::move 的作用](#stdmove-的作用)
+    - [使用 std::move 的時機](#使用-stdmove-的時機)
+    - [std::move 的陷阱](#stdmove-的陷阱)
+  - [移動建構子 vs 複製建構子的選擇](#移動建構子-vs-複製建構子的選擇)
+  - [Rule of Five 的實作選項](#rule-of-five-的實作選項)
+    - [選項 1：全部自定義](#選項-1全部自定義)
+    - [選項 2：使用 =default](#選項-2使用-default)
+    - [選項 3：只定義需要的](#選項-3只定義需要的)
+  - [移動語意的效能優勢](#移動語意的效能優勢)
+  - [何時需要 Rule of Five？](#何時需要-rule-of-five)
+    - [需要的情況（同 Rule of Three）](#需要的情況同-rule-of-three)
+    - [不需要的情況](#不需要的情況)
+  - [實務建議](#實務建議)
+    - [DO（應該做的）](#do應該做的)
+    - [DON'T（不應該做的）](#dont不應該做的)
+  - [Rule of Five vs Rule of Zero](#rule-of-five-vs-rule-of-zero)
+    - [Rule of Five：手動管理](#rule-of-five手動管理)
+    - [Rule of Zero：自動管理](#rule-of-zero自動管理)
+  - [小結](#小結)
 
 ## 什麼是 Rule of Five？
 
@@ -252,7 +286,7 @@ int main() {
 
 ### 執行結果
 
-```
+```sh
 --- 1. 從函式回傳值（自動移動）---
 建構: Temporary String (位址: 0x1234)
 移動建構: Temporary String (轉移所有權)
@@ -322,10 +356,10 @@ std::vector<ModernString> vec;
 vec.push_back(ModernString("Test"));
 
 // 如果移動建構子有 noexcept：
-// → vector 擴展時使用移動，效率高 ✓
+// → vector 擴展時使用移動，效率高
 
 // 如果移動建構子沒有 noexcept：
-// → vector 擴展時使用複製，效率低 ✗
+// → vector 擴展時使用複製，效率低
 ```
 
 ## std::move 的作用
@@ -389,16 +423,16 @@ ModernString str4 = std::move(str3);  // 呼叫複製建構子！不是移動！
 ModernString str1("Hello");
 
 // 1. 複製建構（左值）
-ModernString str2 = str1;           // str1 是左值 → 複製建構子
+ModernString str2 = str1; // str1 是左值 → 複製建構子
 
 // 2. 移動建構（右值）
-ModernString str3 = ModernString("World");  // 臨時物件 → 移動建構子
+ModernString str3 = ModernString("World"); // 臨時物件 → 移動建構子
 
 // 3. 明確移動（左值 → 右值）
-ModernString str4 = std::move(str1);  // std::move → 移動建構子
+ModernString str4 = std::move(str1); // std::move → 移動建構子
 
 // 4. 從函式回傳（自動移動）
-ModernString str5 = createString();   // 回傳值 → 移動建構子
+ModernString str5 = createString(); // 回傳值 → 移動建構子
 ```
 
 ## Rule of Five 的實作選項
@@ -614,8 +648,8 @@ public:
 };
 ```
 
-**優點：** 完全控制
-**缺點：** 容易出錯，維護成本高
+- **優點：** 完全控制
+- **缺點：** 容易出錯，維護成本高
 
 ### Rule of Zero：自動管理
 
@@ -627,8 +661,8 @@ class AutoResource {
 };
 ```
 
-**優點：** 簡潔、不易出錯、自動最優化
-**缺點：** 對特殊需求的控制較少
+- **優點：** 簡潔、不易出錯、自動最優化
+- **缺點：** 對特殊需求的控制較少
 
 ## 小結
 

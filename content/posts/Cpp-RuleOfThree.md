@@ -1,10 +1,37 @@
 +++
 date = '2025-12-16T23:44:27+08:00'
 draft = false
-title = '[C++] Rule of Three: 三法則'
+title = '[C++] Rule of Three（三法則）'
 categories = ['C++ Notes']
-tags = ['C++', 'RAII']
+tags = ['C++']
 +++
+
+# 目錄
+
+- [目錄](#目錄)
+  - [什麼是 Rule of Three？](#什麼是-rule-of-three)
+  - [為什麼需要 Rule of Three？](#為什麼需要-rule-of-three)
+  - [問題範例：違反 Rule of Three](#問題範例違反-rule-of-three)
+    - [執行結果（可能崩潰）](#執行結果可能崩潰)
+    - [問題分析](#問題分析)
+  - [正確做法：遵守 Rule of Three](#正確做法遵守-rule-of-three)
+    - [執行結果](#執行結果)
+  - [深複製 vs 淺複製](#深複製-vs-淺複製)
+    - [淺複製（Shallow Copy）](#淺複製shallow-copy)
+    - [深複製（Deep Copy）](#深複製deep-copy)
+  - [複製賦值運算子的實作細節](#複製賦值運算子的實作細節)
+    - [1. 檢查自我賦值](#1-檢查自我賦值)
+    - [2. Copy-and-Swap idiom（進階技巧）](#2-copy-and-swap-idiom進階技巧)
+  - [何時需要 Rule of Three？](#何時需要-rule-of-three)
+    - [需要的情況](#需要的情況)
+    - [不需要的情況](#不需要的情況)
+  - [現代 C++ 的建議](#現代-c-的建議)
+    - [C++11 之後：優先使用智慧指標](#c11-之後優先使用智慧指標)
+    - [Rule of Zero](#rule-of-zero)
+  - [實務建議](#實務建議)
+    - [DO（應該做的）](#do應該做的)
+    - [DON'T（不應該做的）](#dont不應該做的)
+  - [小結](#小結)
 
 ## 什麼是 Rule of Three？
 
@@ -187,7 +214,7 @@ int main() {
 
 ### 執行結果
 
-```
+```sh
 建構: Hello (位址: 0x1234)
 內容: Hello (位址: 0x1234)
 
@@ -356,13 +383,13 @@ public:
 ```cpp
 class Point {
     double x, y;  // 內建型別，不需要特殊處理
-    // 使用編譯器預設的複製/賦值/解構 ✓
+    // 使用編譯器預設的複製/賦值/解構
 };
 
 class Person {
     std::string name;      // std::string 會管理自己的記憶體
     std::vector<int> ages;  // std::vector 會管理自己的記憶體
-    // 使用編譯器預設的複製/賦值/解構 ✓
+    // 使用編譯器預設的複製/賦值/解構
 };
 ```
 
@@ -408,8 +435,6 @@ public:
         }
         return *this;
     }
-
-    // 不需要自定義解構子！
 };
 ```
 
@@ -461,16 +486,6 @@ class BestPractice {
    };
    ```
 
-3. **使用 =default 和 =delete**
-   ```cpp
-   class Resource {
-   public:
-       ~Resource() = default;
-       Resource(const Resource&) = delete;  // 禁止複製
-       Resource& operator=(const Resource&) = delete;
-   };
-   ```
-
 ### DON'T（不應該做的）
 
 1. **不要只定義其中一個或兩個**
@@ -487,7 +502,7 @@ class BestPractice {
 2. **不要忘記檢查自我賦值**
    ```cpp
    Bad& operator=(const Bad& other) {
-       delete[] data;           // 危險！
+       delete[] data; // 危險！
        data = new char[size];
        // 如果 this == &other，data 已經被刪除了
    }
