@@ -1,10 +1,22 @@
 +++ 
 draft = false
 date = 2025-12-13T16:45:48+08:00
-title = "Do This Every Morning to Boost Your Energy and Improve Your Sleep"
+title = "[Note] Do This Every Morning to Boost Your Energy and Improve Your Sleep"
 categories = ['Podcast']
 tags = ['Health']
 +++
+
+# 目錄
+
+- [目錄](#目錄)
+  - [前言](#前言)
+  - [六個習慣](#六個習慣)
+    - [1.每天起床 30 分鐘內去外面看 5 分鐘天空](#1每天起床-30-分鐘內去外面看-5-分鐘天空)
+    - [2.固定睡眠時間](#2固定睡眠時間)
+    - [3.規律運動](#3規律運動)
+    - [4.間歇性斷食](#4間歇性斷食)
+    - [5.呼吸](#5呼吸)
+    - [6.冷暴露](#6冷暴露)
 
 ## 前言
 

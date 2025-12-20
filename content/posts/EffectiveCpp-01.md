@@ -1,10 +1,31 @@
 +++ 
 draft = false
 date = 2025-12-14T16:44:34+08:00
-title = "Effective C++ 01: View C++ as a federation of languages"
+title = "[Effective C++] 01: View C++ as a federation of languages"
 categories = ['Effective C++']
 tags = ['C++']
 +++
+
+# 目錄
+
+- [目錄](#目錄)
+  - [前言](#前言)
+  - [核心概念](#核心概念)
+  - [四個主要子語言](#四個主要子語言)
+    - [1. C](#1-c)
+    - [2. Object-Oriented C++](#2-object-oriented-c)
+    - [3. Template C++](#3-template-c)
+    - [4. STL](#4-stl)
+  - [實際影響：參數傳遞策略](#實際影響參數傳遞策略)
+    - [C 子語言：內建型別用 pass-by-value](#c-子語言內建型別用-pass-by-value)
+    - [Object-Oriented C++：自定義物件用 pass-by-reference-to-const](#object-oriented-c自定義物件用-pass-by-reference-to-const)
+    - [STL：迭代器和函式物件常用 pass-by-value](#stl迭代器和函式物件常用-pass-by-value)
+  - [為什麼這很重要？](#為什麼這很重要)
+    - [1. 選擇適當的策略](#1-選擇適當的策略)
+    - [2. 理解規則的適用性](#2-理解規則的適用性)
+    - [3. 更有效率的學習](#3-更有效率的學習)
+  - [關鍵重點總結](#關鍵重點總結)
+  - [實務建議](#實務建議)
 
 ## 前言
 

@@ -1,10 +1,46 @@
 +++
 draft = false
 date = 2025-12-15T22:43:46+08:00
-title = "Effective C++ 02: Prefer consts, enums, and inlines to #defines"
+title = "[Effective C++] 02: Prefer consts, enums, and inlines to #defines"
 categories = ['Effective C++']
 tags = ['C++']
 +++
+
+# 目錄
+
+- [目錄](#目錄)
+  - [前言](#前言)
+  - [核心概念](#核心概念)
+  - [問題：使用 #define 的缺點](#問題使用-define-的缺點)
+    - [問題 1：缺乏型別檢查](#問題-1缺乏型別檢查)
+    - [問題 2：無法封裝](#問題-2無法封裝)
+    - [問題 3：macro 的陷阱](#問題-3macro-的陷阱)
+  - [解決方案 1：用 const 取代 #define 常數](#解決方案-1用-const-取代-define-常數)
+    - [基本用法](#基本用法)
+    - [解決方案 1 的特殊情況 1：定義常數指標](#解決方案-1-的特殊情況-1定義常數指標)
+    - [解決方案 1 的特殊情況 2：class 專屬常數](#解決方案-1-的特殊情況-2class-專屬常數)
+  - [解決方案 2：enum hack](#解決方案-2enum-hack)
+  - [解決方案 3：用 inline 函式取代 macro](#解決方案-3用-inline-函式取代-macro)
+    - [問題回顧](#問題回顧)
+    - [解決方案：template inline 函式](#解決方案template-inline-函式)
+    - [inline 函式的特性](#inline-函式的特性)
+  - [現代 C++ 的補充（C++11 及之後）](#現代-c-的補充c11-及之後)
+    - [constexpr（C++11）](#constexprc11)
+    - [inline 變數（C++17）](#inline-變數c17)
+  - [實務建議](#實務建議)
+    - [取代 #define 常數的決策樹](#取代-define-常數的決策樹)
+    - [取代 #define macro 的決策樹](#取代-define-macro-的決策樹)
+  - [#define 的合理使用時機](#define-的合理使用時機)
+    - [1. Include Guards](#1-include-guards)
+    - [2. 條件編譯](#2-條件編譯)
+  - [關鍵重點總結](#關鍵重點總結)
+    - [為什麼要避免 #define？](#為什麼要避免-define)
+    - [替代方案](#替代方案)
+    - [核心原則](#核心原則)
+  - [實例比較](#實例比較)
+    - [Before：使用 #define](#before使用-define)
+    - [After：使用 const/enum/inline](#after使用-constenuminline)
+  - [結語](#結語)
 
 ## 前言
 
