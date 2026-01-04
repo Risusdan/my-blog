@@ -1,5 +1,5 @@
 +++
-draft = true
+draft = false
 date = 2025-12-20T23:13:35+08:00
 title = '[投資筆記] 企業深度研究報告框架'
 categories = ['Investment Notes']
