@@ -19,7 +19,7 @@ categories = ['ClaudeCode']
 | Session 識別    | 使用 `session_id` 區分不同 session，支援多個 Claude Code 同時運作 |
 | 顯示原始 Prompt | 通知會顯示你當初輸入的 prompt（前 100 字元）                      |
 | 自動清理        | 暫存檔案在通知發送後立即刪除，不佔用空間                          |
-| 原生通知        | 使用 macOS 內建的通知系統，包含提示音效                           |
+| 原生通知        | 使用 macOS 內建的通知系統（預設靜音，可自訂音效）                 |
 | 時間門檻        | 只有執行超過 10 秒的任務才會發送通知，避免快速回應打擾            |
 | 防重複通知      | 使用標記檔案防止同一個 prompt 重複發送通知                        |
 
@@ -147,8 +147,8 @@ fi
 
 PROMPT=$(cat "$PROMPT_FILE" 2>/dev/null || echo "Task")
 
-# Send notification using terminal-notifier
-terminal-notifier -title "Claude Code Finished" -message "$PROMPT" -sound Glass
+# Send notification using terminal-notifier (silent by default)
+terminal-notifier -title "Claude Code Finished" -message "$PROMPT"
 
 # Mark as sent and cleanup
 touch "$SENT_MARKER"
@@ -158,8 +158,7 @@ rm -f "$PROMPT_FILE" "$TIME_FILE"
 **說明：**
 - 檢查是否有 prompt 檔案且尚未發送過通知
 - 計算執行時間，只有超過 10 秒才發送通知（避免快速回應打擾）
-- 使用 `terminal-notifier` 發送 macOS 通知
-- `-sound Glass` — 播放提示音效（可改為其他系統音效）
+- 使用 `terminal-notifier` 發送 macOS 通知（預設靜音）
 - `touch ..._sent` — 標記已發送，防止重複通知
 - `rm -f` — 通知發送後立即刪除暫存檔
 
@@ -263,7 +262,7 @@ chmod +x ~/.claude/notify_permission.sh
 INPUT=$(cat)
 TOOL_NAME=$(echo "$INPUT" | jq -r ".tool_name")
 
-terminal-notifier -title "Claude Code Needs Permission" -message "Tool: $TOOL_NAME" -sound Ping
+terminal-notifier -title "Claude Code Needs Permission" -message "Tool: $TOOL_NAME"
 ```
 
 ### 更新 settings.json
@@ -318,13 +317,16 @@ terminal-notifier -title "Claude Code Needs Permission" -message "Tool: $TOOL_NA
 
 ## 自訂選項
 
-### 更換提示音效
+### 啟用提示音效
 
-macOS 內建多種音效，可在 `notify_done.sh` 中修改 `-sound` 參數：
+預設為靜音通知。若要加入音效，在 `notify_done.sh` 中加入 `-sound` 參數：
 
 ```bash
+# 加入音效（在 terminal-notifier 指令後加入）
+terminal-notifier -title "Claude Code Finished" -message "$PROMPT" -sound Glass
+
 # 可用的音效名稱
--sound Glass      # 預設
+-sound Glass
 -sound Ping
 -sound Pop
 -sound Purr
