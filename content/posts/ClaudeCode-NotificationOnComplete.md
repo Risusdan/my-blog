@@ -20,6 +20,8 @@ categories = ['ClaudeCode']
 | 顯示原始 Prompt | 通知會顯示你當初輸入的 prompt（前 100 字元）                      |
 | 自動清理        | 暫存檔案在通知發送後立即刪除，不佔用空間                          |
 | 原生通知        | 使用 macOS 內建的通知系統，包含提示音效                           |
+| 時間門檻        | 只有執行超過 10 秒的任務才會發送通知，避免快速回應打擾            |
+| 防重複通知      | 使用標記檔案防止同一個 prompt 重複發送通知                        |
 
 ---
 
@@ -33,19 +35,20 @@ categories = ['ClaudeCode']
 │ (When prompt sent)  │     │ (Claude response    │
 │                     │     │      complete)      │
 ├─────────────────────┤     ├─────────────────────┤
-│ Save prompt to      │ ──▶ │ Read temp file,     │
-│ temp file           │     │ send notification   │
-│                     │     │ Delete temp file    │
-│                     │     │ (cleanup)           │
+│ Save prompt to      │ ──▶ │ Check elapsed time  │
+│ temp file           │     │ (skip if < 10 sec)  │
+│ Save timestamp      │     │ Check sent marker   │
+│ Remove sent marker  │     │ Send notification   │
+│                     │     │ Mark as sent        │
 └─────────────────────┘     └─────────────────────┘
 ```
 
 **Hook 事件說明：**
 
-| Hook 事件          | 觸發時機                 | 用途                       |
-| ------------------ | ------------------------ | -------------------------- |
-| `UserPromptSubmit` | 你按下 Enter 送出 prompt | 儲存 prompt 內容供稍後使用 |
-| `Stop`             | Claude 完成回應          | 發送通知並清理暫存檔       |
+| Hook 事件          | 觸發時機                 | 用途                                   |
+| ------------------ | ------------------------ | -------------------------------------- |
+| `UserPromptSubmit` | 你按下 Enter 送出 prompt | 儲存 prompt 內容與時間戳，重置發送標記 |
+| `Stop`             | Claude 完成回應          | 檢查時間門檻，發送通知並清理暫存檔     |
 
 ---
 
@@ -85,13 +88,20 @@ INPUT=$(cat)
 PROMPT=$(echo "$INPUT" | jq -r ".prompt" | cut -c 1-100)
 SESSION_ID=$(echo "$INPUT" | jq -r ".session_id")
 
+# Save prompt and timestamp
 echo "$PROMPT" > "/tmp/claude_session_${SESSION_ID}_prompt"
+date +%s > "/tmp/claude_session_${SESSION_ID}_time"
+
+# Remove sent marker so new prompt can trigger notification
+rm -f "/tmp/claude_session_${SESSION_ID}_sent"
 ```
 
 **說明：**
 - `INPUT=$(cat)` — 從 stdin 讀取 Claude Code 傳入的 JSON
 - `jq -r ".prompt"` — 解析 JSON 取得 prompt 內容
 - `cut -c 1-100` — 只保留前 100 字元避免通知過長
+- `date +%s` — 儲存 Unix 時間戳，用於計算執行時間
+- `rm -f ..._sent` — 移除發送標記，允許新 prompt 觸發通知
 - 暫存檔以 `session_id` 命名，支援多 session 同時運作
 
 ---
@@ -115,21 +125,42 @@ chmod +x ~/.claude/notify_done.sh
 
 INPUT=$(cat)
 SESSION_ID=$(echo "$INPUT" | jq -r ".session_id")
+
 PROMPT_FILE="/tmp/claude_session_${SESSION_ID}_prompt"
+TIME_FILE="/tmp/claude_session_${SESSION_ID}_time"
+SENT_MARKER="/tmp/claude_session_${SESSION_ID}_sent"
+
+# Skip if no prompt file or already sent
+if [ ! -f "$PROMPT_FILE" ] || [ -f "$SENT_MARKER" ]; then
+    exit 0
+fi
+
+# Check elapsed time - only notify if task took more than 10 seconds
+START_TIME=$(cat "$TIME_FILE" 2>/dev/null || echo "0")
+NOW=$(date +%s)
+ELAPSED=$((NOW - START_TIME))
+
+if [ "$ELAPSED" -lt 10 ]; then
+    rm -f "$PROMPT_FILE" "$TIME_FILE"
+    exit 0
+fi
 
 PROMPT=$(cat "$PROMPT_FILE" 2>/dev/null || echo "Task")
 
 # Send notification using terminal-notifier
 terminal-notifier -title "Claude Code Finished" -message "$PROMPT" -sound Glass
 
-# Auto-cleanup
-rm -f "$PROMPT_FILE"
+# Mark as sent and cleanup
+touch "$SENT_MARKER"
+rm -f "$PROMPT_FILE" "$TIME_FILE"
 ```
 
 **說明：**
-- 讀取對應 session 的暫存檔取得原始 prompt
+- 檢查是否有 prompt 檔案且尚未發送過通知
+- 計算執行時間，只有超過 10 秒才發送通知（避免快速回應打擾）
 - 使用 `terminal-notifier` 發送 macOS 通知
 - `-sound Glass` — 播放提示音效（可改為其他系統音效）
+- `touch ..._sent` — 標記已發送，防止重複通知
 - `rm -f` — 通知發送後立即刪除暫存檔
 
 ---
@@ -299,6 +330,18 @@ macOS 內建多種音效，可在 `notify_done.sh` 中修改 `-sound` 參數：
 -sound Purr
 -sound Submarine
 -sound Blow
+```
+
+### 調整時間門檻
+
+在 `notify_done.sh` 中修改時間門檻（預設 10 秒）：
+
+```bash
+# 改為 30 秒才通知
+if [ "$ELAPSED" -lt 30 ]; then
+
+# 改為 0 秒（總是通知）
+if [ "$ELAPSED" -lt 0 ]; then
 ```
 
 ### 調整 Prompt 顯示長度
