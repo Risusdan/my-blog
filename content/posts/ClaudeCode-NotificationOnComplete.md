@@ -210,10 +210,7 @@ rm -f "$PROMPT_FILE" "$TIME_FILE"
 
 ### 步驟 4：驗證設定
 
-重新啟動 Claude Code 或開啟新 session，輸入任意 prompt。當 Claude 完成回應後，你應該會：
-
-1. 聽到 "Glass" 提示音
-2. 看到 macOS 通知，顯示你的 prompt 內容
+重新啟動 Claude Code 或開啟新 session，輸入任意 prompt。當 Claude 完成回應且執行時間超過 10 秒後，你應該會看到 macOS 通知，顯示你的 prompt 內容（預設為靜音通知，可在「自訂選項」啟用音效）。
 
 ---
 
