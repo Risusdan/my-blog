@@ -2,7 +2,7 @@
 draft = false
 date = 2026-01-17T21:00:00+08:00
 title = "如何在 macOS 設定 Claude Code 完成通知"
-tags = ["hooks", "notification"]
+tags = []
 categories = ['ClaudeCode']
 +++
 
@@ -206,11 +206,11 @@ rm -f "$PROMPT_FILE"
 
 上述設定只會在 Claude **完全結束回應**時發送通知。但當 Claude 詢問問題或請求權限時，它處於**等待狀態**而非結束狀態，因此不會觸發 `Stop` hook。
 
-| 狀態 | 觸發的 Hook | 會發送通知？ |
-|------|-------------|-------------|
-| Claude 完成回應 | `Stop` | ✅ 是 |
-| Claude 詢問問題 | （原設定無） | ❌ 否 |
-| Claude 等待權限 | （原設定無） | ❌ 否 |
+| 狀態            | 觸發的 Hook  | 會發送通知？ |
+| --------------- | ------------ | ------------ |
+| Claude 完成回應 | `Stop`       | ✅ 是         |
+| Claude 詢問問題 | （原設定無） | ❌ 否         |
+| Claude 等待權限 | （原設定無） | ❌ 否         |
 
 若要在 Claude 需要你注意時也收到通知，可以加入 `Notification` hook。
 
