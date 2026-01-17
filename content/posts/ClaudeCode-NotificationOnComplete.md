@@ -196,8 +196,92 @@ rm -f "$PROMPT_FILE"
 ~/.claude/
 ├── settings.json          # Hooks 設定
 ├── save_prompt.sh         # 儲存 prompt 的 script
-└── notify_done.sh         # 發送通知的 script
+├── notify_done.sh         # 發送通知的 script
+└── notify_waiting.sh      # 等待輸入通知的 script（選用）
 ```
+
+---
+
+## 進階：等待輸入時也發送通知
+
+上述設定只會在 Claude **完全結束回應**時發送通知。但當 Claude 詢問問題或請求權限時，它處於**等待狀態**而非結束狀態，因此不會觸發 `Stop` hook。
+
+| 狀態 | 觸發的 Hook | 會發送通知？ |
+|------|-------------|-------------|
+| Claude 完成回應 | `Stop` | ✅ 是 |
+| Claude 詢問問題 | （原設定無） | ❌ 否 |
+| Claude 等待權限 | （原設定無） | ❌ 否 |
+
+若要在 Claude 需要你注意時也收到通知，可以加入 `Notification` hook。
+
+### 建立等待通知 Script
+
+建立 `~/.claude/notify_waiting.sh`：
+
+```bash
+touch ~/.claude/notify_waiting.sh
+chmod +x ~/.claude/notify_waiting.sh
+```
+
+編輯內容：
+
+```bash
+#!/bin/bash
+
+# Sends notification when Claude needs your attention
+# Used by Notification hook
+
+INPUT=$(cat)
+MESSAGE=$(echo "$INPUT" | jq -r ".message" | cut -c 1-100)
+
+osascript -e "display notification \"$MESSAGE\" with title \"Claude Code Needs Input\" sound name \"Ping\""
+```
+
+### 更新 settings.json
+
+在 `~/.claude/settings.json` 的 `hooks` 區塊中加入 `Notification`：
+
+```json
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/bin/bash ~/.claude/save_prompt.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/bin/bash ~/.claude/notify_done.sh"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/bin/bash ~/.claude/notify_waiting.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+這樣當 Claude 明確需要你注意時（例如詢問問題），也會發送通知。
 
 ---
 
