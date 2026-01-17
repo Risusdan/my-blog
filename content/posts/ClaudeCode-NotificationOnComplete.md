@@ -51,15 +51,14 @@ categories = ['ClaudeCode']
 
 ## 前置需求
 
-確認你的 macOS 已安裝 `jq`（用於解析 JSON）：
+使用 Homebrew 安裝所需工具：
 
 ```bash
-# 檢查是否已安裝
-which jq
-
-# 若未安裝，使用 Homebrew 安裝
-brew install jq
+brew install jq terminal-notifier
 ```
+
+- `jq` — 用於解析 JSON
+- `terminal-notifier` — 用於發送 macOS 通知
 
 ---
 
@@ -120,8 +119,8 @@ PROMPT_FILE="/tmp/claude_session_${SESSION_ID}_prompt"
 
 PROMPT=$(cat "$PROMPT_FILE" 2>/dev/null || echo "Task")
 
-# Send notification
-osascript -e "display notification \"$PROMPT\" with title \"Claude Code Finished\" sound name \"Glass\""
+# Send notification using terminal-notifier
+terminal-notifier -title "Claude Code Finished" -message "$PROMPT" -sound Glass
 
 # Auto-cleanup
 rm -f "$PROMPT_FILE"
@@ -129,8 +128,8 @@ rm -f "$PROMPT_FILE"
 
 **說明：**
 - 讀取對應 session 的暫存檔取得原始 prompt
-- 使用 `osascript` 發送 macOS 原生通知
-- `sound name "Glass"` — 播放提示音效（可改為其他系統音效）
+- 使用 `terminal-notifier` 發送 macOS 通知
+- `-sound Glass` — 播放提示音效（可改為其他系統音效）
 - `rm -f` — 通知發送後立即刪除暫存檔
 
 ---
@@ -197,30 +196,29 @@ rm -f "$PROMPT_FILE"
 ├── settings.json          # Hooks 設定
 ├── save_prompt.sh         # 儲存 prompt 的 script
 ├── notify_done.sh         # 發送通知的 script
-└── notify_waiting.sh      # 等待輸入通知的 script（選用）
+└── notify_permission.sh   # 權限請求通知的 script（選用）
 ```
 
 ---
 
-## 進階：等待輸入時也發送通知
+## 進階：權限請求時也發送通知
 
-上述設定只會在 Claude **完全結束回應**時發送通知。但當 Claude 詢問問題或請求權限時，它處於**等待狀態**而非結束狀態，因此不會觸發 `Stop` hook。
+上述設定只會在 Claude **完全結束回應**時發送通知。但當 Claude 請求工具權限時，它處於**等待狀態**而非結束狀態，因此不會觸發 `Stop` hook。
 
 | 狀態            | 觸發的 Hook  | 會發送通知？ |
 | --------------- | ------------ | ------------ |
 | Claude 完成回應 | `Stop`       | ✅ 是         |
-| Claude 詢問問題 | （原設定無） | ❌ 否         |
-| Claude 等待權限 | （原設定無） | ❌ 否         |
+| Claude 等待權限 | `PreToolUse` | ✅ 是（需設定）|
 
-若要在 Claude 需要你注意時也收到通知，可以加入 `Notification` hook。
+若要在 Claude 請求權限時也收到通知，可以加入 `PreToolUse` hook。
 
-### 建立等待通知 Script
+### 建立權限通知 Script
 
-建立 `~/.claude/notify_waiting.sh`：
+建立 `~/.claude/notify_permission.sh`：
 
 ```bash
-touch ~/.claude/notify_waiting.sh
-chmod +x ~/.claude/notify_waiting.sh
+touch ~/.claude/notify_permission.sh
+chmod +x ~/.claude/notify_permission.sh
 ```
 
 編輯內容：
@@ -228,18 +226,18 @@ chmod +x ~/.claude/notify_waiting.sh
 ```bash
 #!/bin/bash
 
-# Sends notification when Claude needs your attention
-# Used by Notification hook
+# Sends notification when Claude requests tool permission
+# Used by PreToolUse hook
 
 INPUT=$(cat)
-MESSAGE=$(echo "$INPUT" | jq -r ".message" | cut -c 1-100)
+TOOL_NAME=$(echo "$INPUT" | jq -r ".tool_name")
 
-osascript -e "display notification \"$MESSAGE\" with title \"Claude Code Needs Input\" sound name \"Ping\""
+terminal-notifier -title "Claude Code Needs Permission" -message "Tool: $TOOL_NAME" -sound Ping
 ```
 
 ### 更新 settings.json
 
-在 `~/.claude/settings.json` 的 `hooks` 區塊中加入 `Notification`：
+在 `~/.claude/settings.json` 的 `hooks` 區塊中加入 `PreToolUse`：
 
 ```json
 {
@@ -266,13 +264,13 @@ osascript -e "display notification \"$MESSAGE\" with title \"Claude Code Needs I
         ]
       }
     ],
-    "Notification": [
+    "PreToolUse": [
       {
         "matcher": "*",
         "hooks": [
           {
             "type": "command",
-            "command": "/bin/bash ~/.claude/notify_waiting.sh"
+            "command": "/bin/bash ~/.claude/notify_permission.sh"
           }
         ]
       }
@@ -281,7 +279,9 @@ osascript -e "display notification \"$MESSAGE\" with title \"Claude Code Needs I
 }
 ```
 
-這樣當 Claude 明確需要你注意時（例如詢問問題），也會發送通知。
+這樣當 Claude 請求工具權限時，你也會收到通知。
+
+> **注意**：`PreToolUse` 會在每次工具呼叫前觸發。如果你已設定某些工具為自動允許，這些工具仍會觸發通知但不會等待你確認。你可以使用 `matcher` 來過濾特定工具，例如 `"matcher": "Bash"` 只針對 Bash 指令發送通知。
 
 ---
 
@@ -289,16 +289,16 @@ osascript -e "display notification \"$MESSAGE\" with title \"Claude Code Needs I
 
 ### 更換提示音效
 
-macOS 內建多種音效，可在 `notify_done.sh` 中修改：
+macOS 內建多種音效，可在 `notify_done.sh` 中修改 `-sound` 參數：
 
 ```bash
 # 可用的音效名稱
-sound name "Glass"      # 預設
-sound name "Ping"
-sound name "Pop"
-sound name "Purr"
-sound name "Submarine"
-sound name "Blow"
+-sound Glass      # 預設
+-sound Ping
+-sound Pop
+-sound Purr
+-sound Submarine
+-sound Blow
 ```
 
 ### 調整 Prompt 顯示長度
